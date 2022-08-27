@@ -149,6 +149,15 @@
               <option name="dec" value="12">DEC</option>
             </select>
             <input
+              class="border border-gray-300 block w-full p-3 rounded-lg my-4"
+              type="number"
+              min="1900"
+              max="2099"
+              value="<%=Number(moment(new Date()).format('YYYY'))%>"
+              name="selectYear"
+            />
+
+            <input
               class="block w-full p-3 rounded-lg my-4 hover:border-none bg-sky-500 text-white hover:bg-sky-700 cursor-pointer"
               type="submit"
               value="Submit"

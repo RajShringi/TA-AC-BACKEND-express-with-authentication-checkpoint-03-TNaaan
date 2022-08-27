@@ -13,11 +13,17 @@ router.get("/new", (req, res) => {
 router.post("/", async (req, res, next) => {
   try {
     req.body.user = req.user._id;
+    req.body.category =
+      req.body.category[0].toUpperCase() + req.body.category.slice(1);
     console.log(req.body);
     const expense = await Expense.create(req.body);
     res
       .status(200)
-      .redirect(`/dashboards?months=${moment(expense.date).format("M")}`);
+      .redirect(
+        `/dashboards?months=${moment(expense.date).format(
+          "M"
+        )}?selectYear=${moment(expense.date).format("YYYY")}`
+      );
   } catch (err) {
     return next(err);
   }
@@ -41,7 +47,11 @@ router.post("/:id", async (req, res, next) => {
       const expense = await Expense.findByIdAndUpdate(id, req.body);
       res
         .status(200)
-        .redirect(`/dashboards?months=${moment(expense.date).format("M")}`);
+        .redirect(
+          `/dashboards?months=${moment(expense.date).format(
+            "M"
+          )}?selectYear=${moment(expense.date).format("YYYY")}`
+        );
     } else {
       res.redirect("/login");
     }
@@ -58,7 +68,11 @@ router.get("/:id/delete", async (req, res, next) => {
       const expense = await Expense.findByIdAndDelete(id);
       res
         .status(200)
-        .redirect(`/dashboards?months=${moment(expense.date).format("M")}`);
+        .redirect(
+          `/dashboards?months=${moment(expense.date).format(
+            "M"
+          )}?selectYear=${moment(expense.date).format("YYYY")}`
+        );
     } else {
       res.redirect("/login");
     }
