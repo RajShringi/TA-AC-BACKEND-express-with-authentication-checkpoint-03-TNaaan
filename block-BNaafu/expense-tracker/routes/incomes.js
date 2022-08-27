@@ -14,10 +14,16 @@ router.get("/new", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     req.body.user = req.user._id;
+    req.body.source =
+      req.body.source[0].toUpperCase() + req.body.source.slice(1);
     const income = await Income.create(req.body);
     res
       .status(200)
-      .redirect(`/dashboards?months=${moment(income.date).format("M")}`);
+      .redirect(
+        `/dashboards?months=${moment(income.date).format(
+          "M"
+        )}?selectYear=${moment(income.date).format("YYYY")}`
+      );
   } catch (err) {
     return next(err);
   }
@@ -39,10 +45,13 @@ router.post("/:id", async (req, res, next) => {
     const findIncome = await Income.findById(id);
     if (String(findIncome.user) === String(req.user._id)) {
       const income = await Income.findByIdAndUpdate(id, req.body);
-      console.log("Here is the money", moment(income.date).format("M"));
       res
         .status(200)
-        .redirect(`/dashboards?months=${moment(income.date).format("M")}`);
+        .redirect(
+          `/dashboards?months=${moment(income.date).format(
+            "M"
+          )}?selectYear=${moment(income.date).format("YYYY")}`
+        );
     } else {
       res.redirect("/login");
     }
@@ -59,7 +68,11 @@ router.get("/:id/delete", async (req, res, next) => {
       const income = await Income.findByIdAndDelete(id);
       res
         .status(200)
-        .redirect(`/dashboards?months=${moment(income.date).format("M")}`);
+        .redirect(
+          `/dashboards?months=${moment(income.date).format(
+            "M"
+          )}?selectYear=${moment(income.date).format("YYYY")}`
+        );
     } else {
       res.redirect("/login");
     }

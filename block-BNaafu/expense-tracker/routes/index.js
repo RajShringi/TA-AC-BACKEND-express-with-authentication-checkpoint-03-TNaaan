@@ -72,7 +72,7 @@ router.post(
     failureFlash: true,
   }),
   (req, res) => {
-    res.redirect("/incomes");
+    res.redirect("/dashboards");
   }
 );
 

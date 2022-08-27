@@ -7,11 +7,22 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   console.log(req.query);
-  let { start_date, end_date, category, source, months } = req.query;
-  let incomes, expenses, thisMonthIncome, thisMonthExpenses, saving;
+  let { start_date, end_date, category, source, months, selectYear } =
+    req.query;
+  let incomes,
+    expenses,
+    thisMonthIncome,
+    thisMonthExpenses,
+    saving,
+    month,
+    year;
   try {
-    const categories = await Expense.distinct("category");
-    const sources = await Income.distinct("source");
+    const categories = await Expense.find({ user: req.user._id }).distinct(
+      "category"
+    );
+    const sources = await Income.find({ user: req.user._id }).distinct(
+      "source"
+    );
 
     if (start_date && end_date && category === "none" && source === "none") {
       month = null;
@@ -79,7 +90,6 @@ router.get("/", async (req, res, next) => {
       if (thisMonthExpenses.length === 0) {
         thisMonthExpenses = [{ _id: "null", totalAmount: 0 }];
       }
-      console.log(thisMonthExpenses);
       console.log("filter by expenses");
     } else if (start_date && end_date && category === "none" && source) {
       month = null;
@@ -103,14 +113,15 @@ router.get("/", async (req, res, next) => {
       if (thisMonthIncome.length === 0) {
         thisMonthIncome = [{ _id: null, totalAmount: 0 }];
       }
-      console.log(thisMonthIncome);
       console.log("filter by incomes");
-    } else if (months) {
+    } else if (months && selectYear) {
       month = Number(req.query.months);
+      year = Number(req.query.selectYear);
       incomes = await Income.aggregate([
         {
           $project: {
             month: { $month: "$date" },
+            year: { $year: "$date" },
             source: 1,
             amount: 1,
             date: 1,
@@ -118,13 +129,14 @@ router.get("/", async (req, res, next) => {
             name: 1,
           },
         },
-        { $match: { month: month, user: req.user._id } },
+        { $match: { month: month, year: year, user: req.user._id } },
       ]);
 
       expenses = await Expense.aggregate([
         {
           $project: {
             month: { $month: "$date" },
+            year: { $year: "$date" },
             category: 1,
             amount: 1,
             date: 1,
@@ -132,17 +144,18 @@ router.get("/", async (req, res, next) => {
             name: 1,
           },
         },
-        { $match: { month: month, user: req.user._id } },
+        { $match: { month: month, year: year, user: req.user._id } },
       ]);
       thisMonthIncome = await Income.aggregate([
         {
           $project: {
             month: { $month: "$date" },
+            year: { $year: "$date" },
             amount: 1,
             user: 1,
           },
         },
-        { $match: { month: month, user: req.user._id } },
+        { $match: { month: month, year: year, user: req.user._id } },
         { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
       ]);
 
@@ -154,11 +167,12 @@ router.get("/", async (req, res, next) => {
         {
           $project: {
             month: { $month: "$date" },
+            year: { $year: "$date" },
             amount: 1,
             user: 1,
           },
         },
-        { $match: { month: month, user: req.user._id } },
+        { $match: { month: month, year, user: req.user._id } },
         { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
       ]);
 
@@ -169,53 +183,73 @@ router.get("/", async (req, res, next) => {
       saving =
         thisMonthIncome[0].totalAmount - thisMonthExpenses[0].totalAmount;
       console.log("filter by months");
+    } else if (!start_date && !end_date && category === "none" && source) {
+      incomes = await Income.find({ source: source, user: req.user._id });
+      console.log("filter by soruce");
+    } else if (!start_date && !end_date && category && source === "none") {
+      expenses = await Expense.find({ category, user: req.user._id });
+      console.log("filter by expense category");
     } else {
       (start_date = null), (end_date = null);
-      month = moment(new Date()).format("M");
+      month = Number(moment(new Date()).format("M"));
+      year = Number(moment(new Date()).format("Y"));
       incomes = await Income.aggregate([
         {
-          $match: {
-            $expr: {
-              $eq: [{ $month: "$date" }, { $month: new Date() }],
-            },
-            user: req.user._id,
+          $project: {
+            year: { $year: "$date" },
+            month: { $month: "$date" },
+            amount: 1,
+            name: 1,
+            source: 1,
+            user: 1,
+            date: 1,
           },
         },
+        { $match: { year: year, month: month, user: req.user._id } },
       ]);
+
       expenses = await Expense.aggregate([
         {
-          $match: {
-            $expr: {
-              $eq: [{ $month: "$date" }, { $month: new Date() }],
-            },
-            user: req.user._id,
+          $project: {
+            year: { $year: "$date" },
+            month: { $month: "$date" },
+            amount: 1,
+            name: 1,
+            category: 1,
+            user: 1,
+            date: 1,
           },
         },
+        { $match: { year: year, month: month, user: req.user._id } },
       ]);
+
       thisMonthIncome = await Income.aggregate([
         {
-          $match: {
-            $expr: {
-              $eq: [{ $month: "$date" }, { $month: new Date() }],
-            },
-            user: req.user._id,
+          $project: {
+            year: { $year: "$date" },
+            month: { $month: "$date" },
+            amount: 1,
+            user: 1,
           },
         },
-        { $group: { _id: "null", totalAmount: { $sum: "$amount" } } },
+        { $match: { year: year, month: month, user: req.user._id } },
+        { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
       ]);
+
       if (thisMonthIncome.length === 0) {
         thisMonthIncome = [{ _id: null, totalAmount: 0 }];
       }
       thisMonthExpenses = await Expense.aggregate([
         {
-          $match: {
-            $expr: {
-              $eq: [{ $month: "$date" }, { $month: new Date() }],
-            },
-            user: req.user._id,
+          $project: {
+            year: { $year: "$date" },
+            month: { $month: "$date" },
+            amount: 1,
+            user: 1,
           },
         },
-        { $group: { _id: "null", totalAmount: { $sum: "$amount" } } },
+        { $match: { year: year, month: month, user: req.user._id } },
+        { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
       ]);
       if (thisMonthExpenses.length === 0) {
         thisMonthExpenses = [{ _id: "null", totalAmount: 0 }];
