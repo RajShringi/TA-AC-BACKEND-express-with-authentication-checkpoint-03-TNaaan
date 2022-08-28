@@ -75,12 +75,14 @@ router.get("/", async (req, res, next) => {
       expenses = await Expense.find({
         date: { $gte: start_date, $lte: end_date },
         category: category,
+        user: req.user._id,
       });
       thisMonthExpenses = await Expense.aggregate([
         {
           $match: {
             date: { $gte: new Date(start_date), $lte: new Date(end_date) },
             category,
+            user: req.user._id,
           },
         },
         {
@@ -98,12 +100,14 @@ router.get("/", async (req, res, next) => {
       incomes = await Income.find({
         date: { $gte: start_date, $lte: end_date },
         source,
+        user: req.user._id,
       });
       thisMonthIncome = await Income.aggregate([
         {
           $match: {
             date: { $gte: new Date(start_date), $lte: new Date(end_date) },
             source,
+            user: req.user._id,
           },
         },
         {
