@@ -11,13 +11,13 @@
       referrerpolicy="no-referrer"
     />
   </head>
-  <body class="text-gray-600">
+  <body class="text-gray-600 bg-gray-100">
     <% include partials/header %>
     <div class="container mx-auto flex justify-between items-start">
       <div class="w-full">
         <% if(incomes) { %>
         <section
-          class="border border-gray-400 p-2 rounded-lg max-w-3xl mx-auto mb-8"
+          class="shadow bg-green-50 p-2 rounded-lg max-w-3xl mx-auto mb-8"
         >
           <h1 class="text-2xl mb-4">
             <% if(month) { %> <%=moment().month(month-1).format('MMMM')%>,
@@ -34,9 +34,7 @@
           </h1>
           <div class="flex justify-start items-center flex-wrap">
             <% incomes.forEach(income => { %>
-            <div
-              class="p-4 border border-gray-400 rounded-lg shadow-sm mr-4 mb-4"
-            >
+            <div class="p-4 border rounded-lg bg-white shadow mr-4 mb-4">
               <h3 class="my-2 text-xl"><%=income.name%></h3>
               <p class="my-2 text-gray-500"><%=income.source%></p>
               <p class="my-2"><%=moment(income.date).format("MMM Do YY")%></p>
@@ -55,9 +53,7 @@
             <% }) %>
           </div>
           <% if(thisMonthIncome) { %>
-          <section
-            class="border-2 border-gray-400 p-2 rounded-lg max-w-3xl mx-auto my-2"
-          >
+          <section class="border-t border-gray-400 p-2 max-w-3xl mx-auto my-2">
             <h1 class="text-xl">
               Total Income Amount: $<%=thisMonthIncome[0].totalAmount%>
             </h1>
@@ -65,9 +61,7 @@
           <% } %>
         </section>
         <% } %> <% if(expenses) { %>
-        <section
-          class="border-2 border-gray-400 p-2 rounded-lg max-w-3xl mx-auto mb-8"
-        >
+        <section class="shadow bg-red-50 p-2 rounded-lg max-w-3xl mx-auto mb-8">
           <h1 class="text-2xl mb-4">
             <% if(month) { %> <%=moment().month(month-1).format('MMMM')%>,
             Expense:
@@ -83,9 +77,7 @@
           </h1>
           <div class="flex justify-start items-center flex-wrap">
             <% expenses.forEach(expense => { %>
-            <div
-              class="p-4 border-2 border-gray-400 rounded-lg shadow-sm mr-4 mb-4"
-            >
+            <div class="p-4 border bg-white rounded-lg shadow mr-4 mb-4">
               <h3 class="my-2 text-xl"><%=expense.name%></h3>
               <p class="my-2 text-gray-500"><%=expense.category%></p>
               <p class="my-2"><%=moment(expense.date).format("MMM Do YY")%></p>
@@ -104,9 +96,7 @@
             <% }) %>
           </div>
           <% if(thisMonthExpenses) { %>
-          <section
-            class="border-2 border-gray-400 p-2 rounded-lg max-w-3xl mx-auto my-2"
-          >
+          <section class="border-t border-gray-400 p-2 max-w-3xl mx-auto my-2">
             <h1 class="text-xl">
               Total Expense Amount: $<%=thisMonthExpenses[0].totalAmount%>
             </h1>
@@ -115,7 +105,7 @@
         </section>
         <% } %> <% if(saving) { %>
         <section
-          class="border-2 border-gray-400 p-2 rounded-lg max-w-3xl mx-auto mb-8"
+          class="border-2 border-gray-400 p-2 rounded-lg max-w-3xl mx-auto mb-8 bg-white"
         >
           <h1 class="text-2xl">Saving: $<%=saving%></h1>
         </section>
@@ -126,7 +116,7 @@
           <form
             action="/dashboards"
             method="get"
-            class="border-2 max-w-sm p-4 mx-auto rounded-lg border-gray-400 mb-4 w-full"
+            class="max-w-sm p-4 mx-auto rounded-lg mb-4 w-full bg-white shadow"
           >
             <h1 class="text-center text-xl mb-4 border-b p-1">
               Filter by month
@@ -166,7 +156,7 @@
 
           <form
             action="/dashboards"
-            class="border-2 max-w-sm p-4 mx-auto rounded-lg border-gray-400 mb-4 w-full"
+            class="max-w-sm p-4 mx-auto rounded-lg mb-4 w-full bg-white shadow"
             method="get"
           >
             <h1 class="text-center text-xl mb-4 border-b p-1">
