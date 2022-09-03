@@ -17,7 +17,7 @@
       <div class="w-full">
         <% if(incomes) { %>
         <section
-          class="border-2 border-gray-400 p-2 rounded-lg max-w-3xl mx-auto mb-8"
+          class="border border-gray-400 p-2 rounded-lg max-w-3xl mx-auto mb-8"
         >
           <h1 class="text-2xl mb-4">
             <% if(month) { %> <%=moment().month(month-1).format('MMMM')%>,
@@ -35,7 +35,7 @@
           <div class="flex justify-start items-center flex-wrap">
             <% incomes.forEach(income => { %>
             <div
-              class="p-4 border-2 border-gray-400 rounded-lg shadow-sm mr-4 mb-4 flex justify-between items-center space-x-4 w-full"
+              class="p-4 border border-gray-400 rounded-lg shadow-sm mr-4 mb-4"
             >
               <h3 class="my-2 text-xl"><%=income.name%></h3>
               <p class="my-2 text-gray-500"><%=income.source%></p>
@@ -84,7 +84,7 @@
           <div class="flex justify-start items-center flex-wrap">
             <% expenses.forEach(expense => { %>
             <div
-              class="p-4 border-2 border-gray-400 rounded-lg shadow-sm mr-4 mb-4 flex justify-between items-center space-x-4 w-full"
+              class="p-4 border-2 border-gray-400 rounded-lg shadow-sm mr-4 mb-4"
             >
               <h3 class="my-2 text-xl"><%=expense.name%></h3>
               <p class="my-2 text-gray-500"><%=expense.category%></p>

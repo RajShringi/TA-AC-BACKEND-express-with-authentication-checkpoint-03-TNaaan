@@ -7,6 +7,7 @@
     "tailwind:css": "postcss public/stylesheets/tailwind.css -o public/stylesheets/style.css --watch"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "autoprefixer": "^10.4.8",
     "bcrypt": "^5.0.1",
     "connect-flash": "^0.1.1",
