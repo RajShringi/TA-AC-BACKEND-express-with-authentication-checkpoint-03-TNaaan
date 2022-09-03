@@ -5,6 +5,8 @@ const mail = require("../utils/mail");
 const VerificationToken = require("../models/verificationToken");
 const User = require("../models/User");
 const { isValidObjectId } = require("mongoose");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
@@ -22,12 +24,19 @@ router.post("/register", async (req, res, next) => {
       owner: user._id,
       token: OTP,
     });
-    mail.mailTransport().sendMail({
-      from: "emailverification@email.com",
+    const msg = {
       to: user.email,
+      from: "raj24shringi@gmail.com", // Use the email address or domain you verified above
       subject: "Verify your email account",
+      text: "Verify your email account",
       html: `<a href="http://localhost:3000/verify/${verificationToken.owner}/${OTP}">Verify</a>`,
-    });
+    };
+    sgMail
+      .send(msg)
+      .then((res) => {
+        console.log("email sent");
+      })
+      .catch((err) => console.log(err.message));
     res.status(200).send("An Email sent to your account please verify");
   } catch (err) {
     return next(err);
